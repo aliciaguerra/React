@@ -122,7 +122,57 @@ remove those event listeners when the component unmounts from the DOM so that ir
 Flux is an architectural pattern that enforces unidirectional data flow - its controlled purpose is to control derived 
 data so that multiple components cannot interact with the data without risking pollution.
 
-The flux pattern is generic; it's not specific to React applications
+The flux pattern is generic; it's not specific to React applications, nor is it required to build a React app. However, Flux
+is commonly used by React developers because React components are declarative - the rendered UI (View) is simply a function
+of state (Store data).
+
+Action -> Dispatcher -> Store -> View
+
+In Flux pattern, the store is the central authority for all data; any mutations to the data must occur within the store.
+Changes to the Store data are subsequently broadcast to suscribing views via events. Views then update themselves based
+on the new state of recieved data. 
+
+To request changes to any store data, actions may be fired. These actions are controlled by a central dispatcher; actions 
+may not occur simultaneously, ensuring that a store only mutates data once per action. 
+
+The strict undirectional flow of this Flux pattern enforces data stability, reducing data-related runtime errors
+throughout an application.
+
+Flux vs MVC
+Traditional MVC patterns have worked well for separating the concerns of data (model), UI (view), and logic (controller) -
+but many web developers have discovered limitations with that approach as applications grow in size. Specifically, MVC
+architectures frequently encounter two main problems:
+-Poorly defined data flow: the cascading updates which occur across views often lead to a tangled web of events which is
+difficult to debug. 
+-Lack of data integrity: Model data can be mutated from anywhere, yielding unpredictable results among UI. 
+
+With the flux pattern, complex UIs no longer suffer from cascading updates; any given React components will be able to 
+reconstruct its state based on data provided by the store. The flux pattern also enforces data integrity by restricting
+direct access to the shared data.
+
+For example, imagine we have a "master/detail" UI in which the user can select a record from a list (master view) and
+edit it using an auto-populated form (detail view).
+
+With an MVC architecture, the data contained within the model is shared between both the master and detail views. Each
+of these views might have its own controller delegating updates between the model and the view. At any point the data
+contained within the model might be updated - and it's difficult to know where exactly the change occured. Did it happen
+in one of the views sharing that model, or in the controllers? Because the model's data can be mutated by any actor in
+the application, the risk of data pollution in complex UI's is greater than we'd like.
+
+With a flux architecture, the store data is shared between multiple views. However this data can't be directly mutated -
+all of the requests to update the data must pass through the Action>Dispatcher chain first, eliminating the risk of random 
+data pollution. When updates are made to the data, it's now much easier to locate the code requesting those changes.
+
+Differences with AngularJS
+UI components in AngularJS typically rely on some internal $scope to store their data. This data can be directly mutated
+from within the UI component or greater application which relies on that data. 
+
+By contrast, the flux pattern encourages the use of immutable data. Because the store is the central authority of all data,
+any mutations on that data must occur within that store. The risk of data pollution is greatly reduced.
+
+Testing
+One of the most valuable aspects of applications built on Flux is that thier components become incredibly easy to test. 
+Developers can test and recreate the state of any React
      
           
           
