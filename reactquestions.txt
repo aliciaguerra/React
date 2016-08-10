@@ -1,0 +1,131 @@
+1. What is React? How is it different from other frameworks?
+
+React is an open-source JavaScript library created by Facebook for building complex, interactive UIs in web and mobile
+applications.
+The key point in this answer is that React's core purpose is to build UI components; it is often referred to as the 
+"V" (View) in MVC architecture. Therefore it has no opinions on the other pieces of the technology stack and can seamlessly
+be integrated into any application.
+
+Because React is a smaller library focused on building UI components, it is necessarily different than a lot of other
+JavaScript frameworks.
+For example, AngularJS (1.x) approaches building an application by extending HTML markup and injecting various constructs
+(i.e. directives, controllers, services) at runtime. As a result, AngularJS is very opinionated about the greater architecture
+of your application - these abstractions are certainly useful in some cases, but in many situations, they come at the cost
+of flexibility.
+By contrast, React focuses exclusively on the creation of components, and has few (if any) opinions about an application's
+architecture. This allows a developer an incredible amount of flexibility in choosing the architecture they deem best -
+though it also places the responsiblity of choosing (or building) those parts on the developer.
+
+2. What happens during the lifecycle of a React component?
+One of the most valuable parts of React is its component lifecycle.
+At the highest level, React components have lifecycle events that fall into three general categories:
+1. Initialization
+2. State/Property
+3. Destruction
+Every React component defines these events as a mechanism for managing its properties, state, and rendered output. Some of
+these events only happen once, others happen more frequently; understanding these three general categories should help 
+you clearly visualize when certain logic needs to applied.
+For example, a component may need to add event listeners to the DOM when it first mounts. However, it should probably 
+remove those event listeners when the component unmounts from the DOM so that irrelevant processing does not occur.
+
+         class MyComponent extend React.Component {
+          //when the component is added to the DOM...
+          componentDidMount() {
+           window.removeEventListener('resize', this.onResizeHandler);
+         }
+          
+          //when the component is removed from the DOM...
+          componentWillUnmount() {
+           window.removeEventListener('resize', this.onResizeHandler);
+         }
+         
+          onResizeHandler() {
+           console.log('The window has been resized!');
+         }
+        
+        }
+  
+        #Low-Level Component Lifecycle   
+        Initialization        ->     Update                       ->    Destruction
+        getInitialSize()          componentWillRecieveProps()          componentWillUnmount()
+        getDefaultSize()          shouldComponentUpdate()
+        
+        componentWillMount()      componentWillUpdate()
+        render()                  render()
+        componentDidMount()       componentDidUpdate()
+        
+        With these three general buckets exist a number of specific lifestyle hooks that can
+        be utilized by any React - essentially abstract methods - that can be utilized by any React component to more
+        accurately manage updates. Understanding how and when these hooks fire is key to building stable components and
+        will enable you to control the rendering process (improving performance).
+        
+        Take a look at the diagram above. The events under "Initialization" only happen when a component is first 
+        intialized or added to the DOM. However, the events under "Destruction" only happen once (when the component is
+        removed from the DOM). However, the events under "Update" happen every time the properties or state of the 
+        component change.
+        
+        For example, components will automatically re-render themselves any time their properties or state change.
+        However in some cases a component might not need to update - so preventing the component from re-rendering
+        might improve the performance of our application.
+        
+            class MyComponent extends React.Component {
+             //only re-renderif the ID has changed!
+             shouldUpdateComponent(nextProps, nextState) {
+              return nextProps.id===this.props.id;
+              }
+            }
+            
+  3. What can you tell me about JSX?
+  When facebook first released React to the world, they introduced a new dialect of JavaScript called JSX that embeds
+  raw HTML templates inside JavaScript code. JSX code by itself cannot be read by the browser; it must be transpiled into
+  traditional JavaScript using tools like Babel and wetback. While many developers understandably have initial knee-jerk
+  reactions against it, JSX (in tandem with ESX2015) has become the de facto method of defining React components.
+  
+           class MyComponent extends React.Component {
+            render() {
+             let props = this.props();
+             return (
+              <div className="my-component">
+               <a href={props.url}>{props.name}</a>
+              </div>
+              );
+            }
+          }
+          
+    Developers do not have to use JSX (and ES2015) to write an application in React.
+    This is certainly true. Having said that, many React developers prefer to use JSX as its syntax is far more 
+    declarative and uses overall code complexity. Facebook certainly encourages it in their documentation.
+    
+    Adopting JSX allows the developer to simultaneously adopt ES2015 - giving immediate access to some wonderful
+    syntactic sugar.
+    ES2015 introduced a variety of new features to JavaScript that make writing large applications far easier than
+    ever before: classes, block scoping via let, and the new spread operator are just a small portion of the additions.
+    
+         import AnotherClass from './AnotherClass';
+         class MyComponent extends React.Component {
+          render() {
+           let props = this.props;
+           
+           return (
+            <div className="my-component">
+            <AnotherClass {...props} />
+            </div>
+            );
+          }
+        }
+        }
+        
+     But while ES6 is becoming more and more widespread, it still is far from widely supported by the major browsers -
+     so you'll need to use a tool like Babel or webpack to convert everything into legacy ES2015.
+     
+4. Are you using Flux?
+Flux is an architectural pattern that enforces unidirectional data flow - its controlled purpose is to control derived 
+data so that multiple components cannot interact with the data without risking pollution.
+     
+          
+          
+        
+          
+          
+
+
