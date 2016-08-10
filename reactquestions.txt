@@ -121,6 +121,8 @@ remove those event listeners when the component unmounts from the DOM so that ir
 4. Are you using Flux?
 Flux is an architectural pattern that enforces unidirectional data flow - its controlled purpose is to control derived 
 data so that multiple components cannot interact with the data without risking pollution.
+
+The flux pattern is generic; it's not specific to React applications
      
           
           
