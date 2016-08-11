@@ -172,7 +172,37 @@ any mutations on that data must occur within that store. The risk of data pollut
 
 Testing
 One of the most valuable aspects of applications built on Flux is that thier components become incredibly easy to test. 
-Developers can test and recreate the state of any React
+Developers can test and recreate the state of any React component by simply updating the store - direct interactions with 
+the UI (with tools like Selenium) are no longer necessary in many cases.
+
+Popular Flux Libraries
+While flux is a general pattern for enforcing data flow through an application, there exist many implementations to chose 
+from. There are nuances between implementation, as well as specific pros and cons to consider. 
+For example, you might discuss:
+Redux: perhaps the most popular Flux library today
+Alt.js: another popular library for monitoring data in React applications
+
+5. What are stateless components?
+If React components are essentially state machines that generate UI markup, then what are stateless components?
+Stateless components (a flavor of resusable components) are nothing more than pure functions that render DOM based
+solely on the properties provided to them.
+
+         const Statelesss Cmp = (props) => {
+          return (
+           <div className="my-stateless-component">
+           {props.name}: {props.birthday}
+           </div>
+           );
+           };
+         
+         ReactDOM.render (
+          <StatelessCmp name="Art" birthday="10/01/1980" />
+          document.getElementById("main")
+          );
+          
+As you can see, this component has no need for any internal state - let alone a constructor or lifecycle handlers. 
+The output of the component is purely a function of the properties provided to it.
+
      
           
           
