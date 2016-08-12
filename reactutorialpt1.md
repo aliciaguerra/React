@@ -265,4 +265,278 @@ intial state to another component. The majority of this new code will come from 
            render: function() {
             var listItems = this.props.names.map(function(friends){
              return <li> {friend} </li>;
+            });
+          return (
+            <div>
+            <h3>Friends</h3>
+            <ul>
+            {listItems}
+            </ul>
+            </div>
+            )
+            }
+            });
+            
+Remember that the code tht gets returned from our render method is a real representation of what the DOM could look like.
+If you're not familiar with Array.prototype.map, this code might look a little wonky. All map does is create a new array,
+calls our callback function on each item in the array, and fills the new array with the result of the calling the callback
+function on each function.
+
+
+#Array.prototype.map
+        
+          var friends = ['Jake Lingwall', 'Murphy Randall', 'Merrick Christensen'];
+          var listItems = friends.map(function(friend) {
+           return "<li> " + friend + "</li>";
+           });
+          console.log(listItems); //["<li> Jake Lingwall</li>", "<li>Murphy Randall</li>", "<li>Merrick Christensen</li>"];
+          
+The console.log above returns ["<li>Jake Lingwall</li>", "<li>Murphy Randall</li>", "<li>Merrick Christensen</li>"].
+Notice that all that happened was we made a new array and added <li></li> to each item in the original array.
+
+What's great about map is that it fits perfectly into React (and it's built into JavaScript). So in our child component
+again, we're mapping over names, wrapping each in a pair of <li> tags, and saving that to the listItems variable. Then,
+our render method returns an unordered list with all our friends.
+
+Let's look at one example before we stop talking about props. It's important to understand that wherever the data lives, is
+the exact place you want to manipulate data. This keeps it simple to reason about your data. All getter/setter methods for
+a certain piece of data will always be in the same component where the data was defined. If you needed to manipulate some
+piece of data outside where the data lives, you'd pass the getter/setter method into that component as props.
+
+#Passing a List to a Child Component with a Setter Method
+
+           var FriendsContainer = React.createClass({
+            getInitialState: function() {
+             return {
+              name: 'Tyler McGinnis',
+              friends: ['Jake Lingwall', 'Murphy Randall', 'Merrick Christensen'];
+              }
+            };
+            
+          addFriend: function(friend){
+           this.setState({
+            friends: this.state.friends.concat([friend])
+            });
+          },
+          
+          render: function(){
+           return(
+              <div>
+           <h3> Name: {this.state.name}</h3>
+           <AddFriend addNew={this.addFriend}>
+           <ShowList names={this.state.friend}/>
+               </div>
+               )
+             }
+           });
+           
+           var addFriend = React.createClass({
+            getInitialState: function(){
+            return {
+             newFriend: ''
+             }
+           };
+           
+           updateNewFriend: function(e){
+            setState({
+             newFriend: e.target.value
+             });
+            };
+            
+            handleAddNew: function(){
+             this.props.addNew(this.state.newFriend);
+             this.setState({
+              new Friend: ''
+             });
+             };
              
+             render: function() {
+              return (
+              <div>
+              <input type="text" value={this.state.newFriend} onChange={this.updateNewFriend} /}
+              <button onClick={this.addHandleNew}>Add Friend</button>
+              </div>
+                    );
+                  }  
+                });
+                
+              var showList = React.createClass({
+               render: function(){
+                var listItems = this.prop.names.map(function(friend) {
+                 return <li> {friend} </li>;
+                });
+                return (
+                <div>
+                <h3>Friends</h3>
+                <ul>
+                <listItems>
+                </ul>
+                </div>
+                  )
+                 }
+                });
+ 
+ You'll notice that the code above is mostly the same as the previous example, except now we have the ability to add a 
+ friend's name to the list. Notice how I created a new addFriend component that manages the new friend we're going to add.
+ The reason for this is because the parent component (FriendContainer) doesn't care about the new friend you're adding,
+ it only cares about all of your friends as a whole (the friends array). However, because we're sticking with the rule of only manipulate your data from the component that cares about it, we've passed the addFriend method down into our addFriend
+ component as a prop and we call it with the newFriend once the handleAddNew method is called.
+ 
+ Before we move on from props, I want to cover two more React features regarding props. There are propTypes andgetDefaultTypes. I won't go into much detail here because both are pretty straight forward.
+ 
+ propTypes allow you to control the presence , or types of certain props passed to the child components. With propTypes,
+ you can specify that certain props are required or that certain props be a specific type.
+ 
+ getDefaultProps allow you to specify a deafult (or backup) value for certain props just in case those props are 
+ never passed into the component.
+ 
+ I've modified our example from earlier to now, using propTypes, require that addFriend is a function and that it's passed
+ into the addFriend component. I've also, using getDefaultProps, specified that if no array of friends is given to the
+ ShowList component, it will default to an empty array.
+ 
+ #Passing a List to a Child Component with a Setter Method with Default Props and Type Checking
+ 
+                 var FriendsContainer = React.CreateClass({
+                     getInitialState: function() {
+                      return {
+                        name: 'Tyler McGinnis',
+                        friends: ['Jake Lingwall', 'Murphy Randall', 'Merrick
+                                   Christensen'];
+                                  }
+                                };
+                      addFriend: function(friend) {
+                         this.setState({
+                           friends: this.state.friends.concat([friend])
+                           });
+                          },
+                          
+                      render: function(){
+                        return (
+                         <div>
+                          <h3>Name: {this.state.name}</h3>
+                          <AddFriend addNew={this.addFriend} />
+                          <ShowList names={this.state.friends} />
+                         </div>
+                          )
+                         }
+                        });
+                        
+                        var addFriend=React.createClass({
+                         getInitialState: function(){
+                          return {
+                           newFriend: ''
+                           }
+                          },
+                        propTypes: {
+                         addNew: React.PropTypes.func.isRequired
+                         },
+                        updateNewFriend: function(e) {
+                         this.State({
+                          newFriend: e.target.value
+                          });
+                        },
+                        handleAddNew: function() {
+                         this.props.addNew(this.state.newFriend);
+                         this.setState({
+                          newFriend: ''
+                          });
+                        },
+                        render:function() {
+                         return(
+                         <div>
+                         <input type="text" value={this.state.newFriend} onChange=
+                          {this.UpdateNewFriend} />
+                         <button onClick={this.handleAddNew}>Add Friend</button>
+                         </div>
+                           );
+                          }
+                        });
+                        
+                        var showList=React.createClass({
+                         getDefaultProps: function() {
+                          return {
+                           names: []
+                           }
+                          },
+                          
+                        render: function() {
+                         var listItems = this.props.names.map(function(friend){
+                          return <li> {friend} </li>;
+                          });
+                         return(
+                          <div>
+                           <h3>Friends</h3>
+                           <ul>
+                           {listItems}
+                           </ul>
+                           </div>
+                           )
+                          }
+                        });
+                        
+#Component Lifecycle
+Each component you make will have its own lifecycle events that are useful for various things. For example, if we wanted
+to make an ajax request on the initial render and fetch some data, where would we do that? Or, if they wanted to run
+some logic whenever the props changed, how do we do that? The different lifecycle events are the answers to both of these.
+
+               var FriendsContainer=React.createClass({
+                getInitialState: function(){
+                 alert('In getInitialState'),
+                 return {
+                  name: 'Tyler McGinnis'
+                  }
+                },
+                
+               //Invoke once before first render
+               componentWillMount: function(){
+               //Calling setState here does not cause a re-render
+               alert('In Component Will Mount');
+               },
+               
+               //Invoked once after the first render
+               componentDidMount: function() {
+                //You now have access to this.getDOMNode
+                alert('In Component Did Mount');
+                },
+                
+              //Invoked whenever there is a prop change
+               //Called BEFORE Render
+               componentWillRecieveProps: function(nextProps){
+                //Not called for the initial render
+                //Previous props can be accessed by this.props
+                //Calling setState here does not trigger an additional re-render
+                alert('In component will recieve props');
+                },
+                
+              //Called IMMEDIATELY before a component is unmounted 
+                componentWillUnmount: function(){},
+                
+                render: function(){
+                 return (
+                  <div>
+                   Hello, {this.state.name}
+                  </div>
+                  )
+                }
+              });
+              
+  componentWillMount: Invoked once before the initial render. If you were to call setState here, no re-render would be
+  invoked. An example of this would be if you're using a service like firebase, you'd set up a reference to your firebase
+  database here since it's only invoked once on the initial reader.
+  
+  componentDidMount: Invoked once after the single reader. Because the component has already been invoked when this method
+  is invoked, you have access to the virtual DOM if you need it. You do that by calling this.getDOMNode(). Now it might 
+  seem like if you wanted to make AJAX requests you would do that in componentWillMount, but the devs at facebook actually
+  recommend you do that in componentDidMount. So this is the lifecycle event where you'll be making your AJAX requests
+  to fetch some data.
+  
+  componentWillRecieveProps: This life cycle is not called on the intial render, but is instead called whenever there is
+  a change to props. Use this method as a way to react to a prop change before render() is called by updating the state
+  with setState.
+  
+  componentWillUnmount-This life cycle is invoked immediately before a component is unmounted from the DOM. This is where 
+  you can do necessary cleanup. For example, going back to our firebase example this is the lifecycle event where you would
+  clean up your firebase reference you set in componentWillMount.
+          
+          
+            
